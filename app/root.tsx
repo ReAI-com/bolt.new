@@ -1,6 +1,6 @@
 import { useStore } from '@nanostores/react';
 import type { LinksFunction } from '@remix-run/cloudflare';
-import { Links, Meta, Outlet, Scripts, ScrollRestoration } from '@remix-run/react';
+import { Links, Meta, Outlet, Scripts, ScrollRestoration, useLocation, useNavigate } from '@remix-run/react';
 import tailwindReset from '@unocss/reset/tailwind-compat.css?url';
 import { themeStore } from './lib/stores/theme';
 import { stripIndents } from './utils/stripIndent';
@@ -64,10 +64,24 @@ export const Head = createHead(() => (
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const theme = useStore(themeStore);
+  const location = useLocation();
+  const navigate = useNavigate();
 
+  // Handle theme changes
   useEffect(() => {
     document.querySelector('html')?.setAttribute('data-theme', theme);
   }, [theme]);
+
+  // Clean URL credentials during navigation
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    if (url.username || url.password) {
+      const cleanUrl = new URL(url);
+      cleanUrl.username = '';
+      cleanUrl.password = '';
+      navigate(cleanUrl.pathname + cleanUrl.search + cleanUrl.hash, { replace: true });
+    }
+  }, [location, navigate]);
 
   return (
     <>
