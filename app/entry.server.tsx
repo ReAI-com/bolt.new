@@ -13,7 +13,12 @@ export default async function handleRequest(
   remixContext: EntryContext,
   _loadContext: AppLoadContext,
 ) {
-  const readable = await renderToReadableStream(<RemixServer context={remixContext} url={request.url} />, {
+  // Clean URL before server-side rendering to prevent History API origin mismatch
+  const cleanUrl = new URL(request.url);
+  cleanUrl.username = '';
+  cleanUrl.password = '';
+  
+  const readable = await renderToReadableStream(<RemixServer context={remixContext} url={cleanUrl.toString()} />, {
     signal: request.signal,
     onError(error: unknown) {
       console.error(error);

@@ -98,12 +98,10 @@ export function useChatHistory() {
 
 function navigateChat(nextId: string) {
   /**
-   * FIXME: Using the intended navigate function causes a rerender for <Chat /> that breaks the app.
-   *
-   * `navigate(`/chat/${nextId}`, { replace: true });`
+   * Use clean URL without auth credentials for navigation
+   * Auth credentials are stripped at app initialization
    */
   const url = new URL(window.location.href);
   url.pathname = `/chat/${nextId}`;
-
   window.history.replaceState({}, '', url);
 }
