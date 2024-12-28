@@ -75,8 +75,15 @@ export const ChatImpl = memo(({ initialMessages, storeMessageHistory }: ChatProp
 
   const [animationScope, animate] = useAnimate();
 
+  const cleanApiUrl = () => {
+    const url = new URL(window.location.href);
+    url.username = '';
+    url.password = '';
+    return `${url.origin}/api/chat`;
+  };
+
   const { messages, isLoading, input, handleInputChange, setInput, stop, append } = useChat({
-    api: '/api/chat',
+    api: cleanApiUrl(),
     onError: (error) => {
       logger.error('Request failed\n\n', error);
       toast.error('There was an error processing your request');
@@ -85,6 +92,9 @@ export const ChatImpl = memo(({ initialMessages, storeMessageHistory }: ChatProp
       logger.debug('Finished streaming');
     },
     initialMessages,
+    body: {
+      credentials: 'omit'
+    }
   });
 
   const { enhancingPrompt, promptEnhanced, enhancePrompt, resetEnhancer } = usePromptEnhancer();

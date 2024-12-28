@@ -10,5 +10,8 @@ export async function request(url: string, init?: CommonRequest) {
     return nodeFetch.default(url, { ...init, agent });
   }
 
-  return fetch(url, init);
+  const cleanUrl = new URL(url, window.location.origin);
+  cleanUrl.username = '';
+  cleanUrl.password = '';
+  return fetch(cleanUrl.toString(), { ...init, credentials: 'omit' });
 }

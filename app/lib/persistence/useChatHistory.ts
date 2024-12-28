@@ -102,6 +102,8 @@ function navigateChat(nextId: string) {
    * Auth credentials are stripped at app initialization
    */
   const url = new URL(window.location.href);
+  url.username = '';
+  url.password = '';
   url.pathname = `/chat/${nextId}`;
-  window.history.replaceState({}, '', url);
+  window.history.replaceState({}, '', url.toString());
 }
